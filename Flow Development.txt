@@ -1,0 +1,431 @@
+Frontend:
+
+First Step: Structure - Done
+Second Step: UI login - Done
+Third Step: Every visit the / go to login - Done
+
+
+Backend:
+Create Table for users - Done
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    school_id VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin','teacher','student') NOT NULL,
+    status ENUM('active','inactive') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    first_name VARCHAR(100),
+    middle_name VARCHAR(100),
+    last_name VARCHAR(100),
+    suffix_name VARCHAR(100),
+    age INT,
+    status ENUM('active','graduated','dropped','transferred') DEFAULT 'active',
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
+//added new
+ALTER TABLE students
+ADD profile_photo LONGTEXT;
+
+ALTER TABLE students
+ADD gender ENUM('male','female'),
+ADD contact_number VARCHAR(20),
+ADD address TEXT,
+ADD guardian_name VARCHAR(100),
+ADD guardian_contact VARCHAR(20);
+ALTER TABLE students
+ADD email VARCHAR(100);
+
+
+CREATE TABLE teachers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    department VARCHAR(100),
+    rank_level VARCHAR(100),
+    age INT,
+    
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+//added more information in teacher
+ALTER TABLE teachers
+ADD middle_name VARCHAR(100),
+ADD suffix_name VARCHAR(50),
+ADD gender ENUM('male','female'),
+ADD birthdate DATE,
+ADD contact_number VARCHAR(20),
+ADD email VARCHAR(100),
+ADD address TEXT;
+ALTER TABLE teachers
+ADD hire_date DATE,
+ADD employment_type ENUM('full_time','part_time','contract'),
+ADD specialization VARCHAR(150);
+ALTER TABLE teachers
+ADD profile_photo LONGTEXT;
+ALTER TABLE teachers
+ADD highest_education VARCHAR(100);
+
+//adding because i need status 
+ALTER TABLE teachers
+ADD status ENUM(
+'active',
+'leave',
+'maternity_leave',
+'retired',
+'resigned'
+) DEFAULT 'active';
+
+
+CREATE TABLE subjects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    subject_name VARCHAR(100) NOT NULL,
+    subject_code VARCHAR(50) UNIQUE
+);
+
+CREATE TABLE classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    grade_level VARCHAR(20),
+    section VARCHAR(20),
+    school_year_id INT,
+
+    FOREIGN KEY (school_year_id) REFERENCES school_years(id)
+);
+
+
+CREATE TABLE enrollments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    class_id INT,
+    school_year_id INT,
+    enrollment_status ENUM('enrolled','completed','dropped') DEFAULT 'enrolled',
+
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (class_id) REFERENCES classes(id),
+    FOREIGN KEY (school_year_id) REFERENCES school_years(id)
+);
+
+
+CREATE TABLE class_subjects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_id INT,
+    subject_id INT,
+    teacher_id INT,
+
+    FOREIGN KEY (class_id) REFERENCES classes(id),
+    FOREIGN KEY (subject_id) REFERENCES subjects(id),
+    FOREIGN KEY (teacher_id) REFERENCES teachers(id)
+);
+
+CREATE TABLE school_years (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year_start INT NOT NULL,
+    year_end INT NOT NULL,
+    is_active BOOLEAN DEFAULT FALSE
+);
+
+
+CREATE TABLE grades (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    enrollment_id INT,
+    class_subject_id INT,
+    grade DECIMAL(5,2),
+
+    FOREIGN KEY (enrollment_id) REFERENCES enrollments(id),
+    FOREIGN KEY (class_subject_id) REFERENCES class_subjects(id)
+
+    
+);
+
+//chnages for better grading support ph 
+ALTER TABLE grades
+ADD grading_period ENUM('1st','2nd','3rd','4th') NOT NULL;
+
+ALTER TABLE grades
+ADD UNIQUE unique_grade (
+enrollment_id,
+class_subject_id,
+grading_period
+);
+
+CREATE TABLE attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    enrollment_id INT,
+    class_subject_id INT,
+    date DATE,
+    status ENUM('present','absent','late'),
+
+    FOREIGN KEY (enrollment_id) REFERENCES enrollments(id),
+    FOREIGN KEY (class_subject_id) REFERENCES class_subjects(id)
+);
+
+
+CREATE TABLE enrollment_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    student_id INT NOT NULL,
+    class_id INT NOT NULL,
+    school_year_id INT NOT NULL,
+
+    status ENUM('pending','approved','rejected') DEFAULT 'pending',
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (class_id) REFERENCES classes(id),
+    FOREIGN KEY (school_year_id) REFERENCES school_years(id)
+);
+
+CREATE TABLE activities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    activity_date DATE,
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+//adding for activities
+ALTER TABLE activities
+ADD type ENUM('activity','announcement') DEFAULT 'activity';
+
+CREATE TABLE school_calendar (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    date DATE UNIQUE,
+    type ENUM('class','holiday','event','suspension') DEFAULT 'class',
+    description VARCHAR(255),
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+You already completed:
+
+✔ Express server - done
+✔ MVC structure - done
+✔ MySQL connection - done
+✔ mysql2 queries - done
+✔ bcrypt password hashing - done
+
+1️ Login API - done
+2️ Express Session - done
+3️ Protected routes - done
+4 Public routes - done
+5 Connect React login page - done
+
+
+NEXT:
+
+1️⃣ User Role System
+2️⃣ Dashboard Data
+3️⃣ Student Management
+4️⃣ Teacher Management
+5️⃣ Enrollment System
+6️⃣ Subjects
+7️⃣ Grades
+8️⃣ Attendance
+9️⃣ Reports
+
+1. 1️⃣ User Role System - Done
+
+# Role Access Table
+
+| Page       | Admin | Teacher | Student   |
+| ---------- | ----- | ------- | --------- |
+| Login      | ✅     | ✅       | ✅         |
+| Dashboard  | ✅     | ✅       | ✅         |
+| Students   | ✅     | ✅       | ❌         |
+| Teachers   | ✅     | ❌       | ❌         |
+| Enrollment | ✅     | ❌       | ✅         |
+| Grades     | ✅     | ✅       | View Only |
+| Attendance | ✅     | ✅       | View Only |
+| Reports    | ✅     | ✅       | ❌         |
+| Users      | ✅     | ❌       | ❌         |
+| Settings   | ✅     | ❌       | ❌         |
+| Profile    | ✅     | ✅       | ✅         |
+
+
+Sidebar layout and user role hidden if no applicable to open - Done
+
+
+# Page Content Description
+
+**Login.jsx** - Done
+User authentication page where students, teachers, and administrators log in using their school ID and password.
+
+ 1️⃣ Create User Account - for login.jsx
+2️⃣ Create Student Profile - fir student.jsx
+3️⃣ Create Class (Grade + Section + School Year) - 
+4️⃣ Enroll Student in Class -
+5️⃣ Assign Subjects + Teachers to Class -
+6️⃣ Record Grades -
+7️⃣ Record Attendance -
+
+**Students.jsx** - 
+✔ student information - done
+✔ enrollment status - done
+ class assignment (via Enrollment) - no yet
+
+SchoolYears.jsx - DONE
+- added year and active school year
+
+Activity.jsx
+- Done
+Post and show all the activties
+
+Subjects.jsx - Done
+- manage subjects offered
+
+Classes.jsx
+- manage grade + section groups - done
+
+**Teachers.jsx** - Done
+Admin page for managing teacher accounts, teacher information, and assigned subjects.
+- manage teacher accounts
+
+
+ClassSubjects.jsx
+- assign teachers to subjects/classes - DONE
+
+**Enrollment.jsx** -  Done
+Request enroll students all
+- assign students to classes per school year
+
+Enrollment- Request.jsx
+administrators to review and approve them.
+ - Done
+
+**Grades.jsx** - Done
+Teachers input and manage student grades
+- record grades per subject per student per year
+
+**Attendance.jsx** - Done
+Teachers record student attendance and 
+- track student attendance per class
+
+**Reports.jsx** - Done
+Generates academic reports such as grade summaries, attendance reports, and class performance.
+- generate report cards - Done
+- generate class reports - Done
+
+ 
+Admin-only page for managing system users including admins, teachers, and student accounts.
+
+**Settings.jsx** -
+System configuration page where administrators manage system settings and preferences.
+
+**Profile.jsx** -
+Personal profile page where users can view and update their personal information and account details.
+ - while students can view their academic results.
+ -students can view their attendance history.
+
+**Dashboard.jsx** - Done
+- Main overview page displaying system statistics, quick access to modules, and summary information.
+- Monthly Activity
+- Month Award : Congrats to our studens Juan winning chess in Palaro
+
+
+Assign Task and Assignment jsx
+- teacher can assign task and assignment to grades section and subjects levels or students
+
+USer.jsx - Done
+
+tracker:
+
+Login.jsx
+✔ authentication
+
+Users.jsx
+✔ create accounts
+
+Students.jsx
+✔ student information
+✔ enrollment status
+
+Subjects.jsx
+- Done
+
+Teachers.jsx
+ - Done
+
+Classes.jsx
+ - done
+
+ClassSubjects.jsx
+ - DONE
+
+Enrollment.jsx
+ - done
+
+ Enrollment- Request.jsx
+ - Done
+
+Grades.jsx
+- Done
+
+Attendance.jsx
+ - Done
+
+Reports.jsx
+ - Done
+
+
+Dashboard 
+Done
+
+Calendar.jsx - DOne
+This will allow admin/teachers to mark:
+
+Class Day - DOne
+Holiday - DOne
+Event - DOne
+Suspension - DOne
+
+After this works we will connect Attendance → Calendar. - DOne
+
+
+Assign Task and Assignment jsx
+no - Yet
+
+Profile.jsx 
+- done
+
+**Users.jsx** -
+- Done
+
+
+========================================================================================
+
+For Future:
+Next Feature I Recommend
+
+Since your system is getting mature, the next major feature should be:
+
+Promotion System
+
+At the end of school year:
+
+Grade 1 → Grade 2
+Grade 2 → Grade 3
+
+Automatically create next enrollment when:
+
+enrollment_status = completed
+
+Example admin button:
+
+Promote Students to Next Grade
+
