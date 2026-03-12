@@ -21,8 +21,6 @@ app.use(
   }),
 );
 
-app.options("*", cors());
-
 app.use(helmet());
 app.use(express.json());
 
