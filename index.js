@@ -8,10 +8,15 @@ const session = require("express-session");
 const app = express();
 const port = process.env.PORT || 3001;
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://school-management-system-tau-ebon.vercel.app/",
+];
+
 // middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // React frontend
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
