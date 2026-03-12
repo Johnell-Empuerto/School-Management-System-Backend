@@ -3,18 +3,21 @@ const db = require("../config/db");
 async function getAllEnrollments() {
   const [rows] = await db.query(`
         SELECT 
-            e.id,
-            s.first_name,
-            s.last_name,
-            c.grade_level,
-            c.section,
-            sy.year_start,
-            sy.year_end,
-            e.enrollment_status
-        FROM enrollments e
-        JOIN students s ON e.student_id = s.id
-        JOIN classes c ON e.class_id = c.id
-        JOIN school_years sy ON e.school_year_id = sy.id
+    e.id,
+    e.student_id,
+    e.class_id,
+    e.school_year_id,
+    s.first_name,
+    s.last_name,
+    c.grade_level,
+    c.section,
+    sy.year_start,
+    sy.year_end,
+    e.enrollment_status
+FROM enrollments e
+JOIN students s ON e.student_id = s.id
+JOIN classes c ON e.class_id = c.id
+JOIN school_years sy ON e.school_year_id = sy.id
     `);
 
   return rows;

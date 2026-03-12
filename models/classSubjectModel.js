@@ -4,12 +4,13 @@ async function getAllClassSubjects() {
   const [rows] = await db.query(`
     SELECT 
   cs.id,
+  cs.class_id,
+  cs.subject_id,
   cs.teacher_id,
   c.grade_level,
   c.section,
   s.subject_name,
-  t.first_name,
-  t.last_name
+  CONCAT(t.first_name, ' ', t.last_name) AS teacher_name
 FROM class_subjects cs
 JOIN classes c ON cs.class_id = c.id
 JOIN subjects s ON cs.subject_id = s.id
