@@ -25,6 +25,21 @@ app.use(helmet());
 app.use(express.json());
 
 // SESSION MIDDLEWARE
+// app.use(
+//   session({
+//     name: "sms-session",
+//     secret: process.env.SESSION_SECRET || "devsecret",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       httpOnly: true,
+//       secure: false, // false for localhost
+//       sameSite: "lax",
+//       maxAge: 60 * 60 * 1000, // 1 hour
+//     },
+//   }),
+// );
+
 app.use(
   session({
     name: "sms-session",
@@ -33,9 +48,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // false for localhost
-      sameSite: "lax",
-      maxAge: 60 * 60 * 1000, // 1 hour
+      secure: true,
+      sameSite: "none",
+      maxAge: 60 * 60 * 1000,
     },
   }),
 );
