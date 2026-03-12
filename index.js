@@ -10,7 +10,7 @@ const port = process.env.PORT || 3001;
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://school-management-system-tau-ebon.vercel.app/",
+  "https://school-management-system-tau-ebon.vercel.app",
 ];
 
 // middleware
@@ -20,6 +20,8 @@ app.use(
     credentials: true,
   }),
 );
+
+app.options("*", cors());
 
 app.use(helmet());
 app.use(express.json());
