@@ -35,8 +35,7 @@ async function deleteEnrollment(req, res) {
       message: "Enrollment removed",
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Can't delete student used drop" });
   }
 }
 

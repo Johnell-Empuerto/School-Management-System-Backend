@@ -41,7 +41,7 @@ const deleteYear = async (req, res) => {
 
     res.json({ message: "School year deleted" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: "Cant delete because its being used!" });
   }
 };
 

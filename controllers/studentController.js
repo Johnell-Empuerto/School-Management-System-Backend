@@ -32,7 +32,9 @@ async function deleteStudent(req, res) {
     const result = await studentModel.deleteStudent(req.params.id);
     res.json({ message: "Student deleted", result });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res
+      .status(500)
+      .json({ message: "Cant delete student because its  enrolled already" });
   }
 }
 

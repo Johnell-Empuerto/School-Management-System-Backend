@@ -8,9 +8,30 @@ async function getUsers() {
 
 // existing
 async function getLogin(school_id) {
-  const [rows] = await db.query("SELECT * FROM users where school_id = ?", [
-    school_id,
-  ]);
+  const [rows] = await db.query(
+    `
+    SELECT 
+        u.id,
+        u.school_id,
+        u.password,
+        u.role,
+
+        s.first_name AS student_first_name,
+        s.last_name AS student_last_name,
+        s.profile_photo AS student_photo,
+
+        t.first_name AS teacher_first_name,
+        t.last_name AS teacher_last_name,
+        t.profile_photo AS teacher_photo
+
+    FROM users u
+    LEFT JOIN students s ON s.user_id = u.id
+    LEFT JOIN teachers t ON t.user_id = u.id
+    WHERE u.school_id = ?
+    `,
+    [school_id],
+  );
+
   return rows;
 }
 

@@ -71,8 +71,12 @@ const deleteTeacher = async (req, res) => {
 
     res.json({ message: "Teacher deleted" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({
+        message:
+          "Can't delete  because its already have a class assigned or active",
+      });
   }
 };
 

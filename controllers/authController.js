@@ -21,6 +21,22 @@ async function getUserLoginControllers(req, res) {
     if (response.length > 0) {
       const user = response[0];
 
+      let firstName = null;
+      let lastName = null;
+      let profile_photo = null;
+
+      if (user.role === "student") {
+        firstName = user.student_first_name;
+        lastName = user.student_last_name;
+        profile_photo = user.student_photo;
+      }
+
+      if (user.role === "teacher") {
+        firstName = user.teacher_first_name;
+        lastName = user.teacher_last_name;
+        profile_photo = user.teacher_photo;
+      }
+
       const match = await bcrypt.compare(password, user.password);
 
       if (!match) {
@@ -39,8 +55,11 @@ async function getUserLoginControllers(req, res) {
         message: "Login success",
         user: {
           id: user.id,
-          role: user.role,
           school_id: user.school_id,
+          role: user.role,
+          firstName,
+          lastName,
+          profile_photo,
         },
       });
     } else {

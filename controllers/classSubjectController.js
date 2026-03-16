@@ -36,8 +36,7 @@ async function deleteClassSubject(req, res) {
       message: "Assignment deleted",
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Cant delete because its being used!" });
   }
 }
 

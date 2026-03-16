@@ -40,9 +40,7 @@ const deleteSubject = async (req, res) => {
 
     res.json({ message: "Subject deleted" });
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Can't delete because its being used!" });
   }
 };
 
