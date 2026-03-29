@@ -84,6 +84,12 @@ async function updateProfile(req, res) {
       validateBase64Image(data.profile_photo);
     }
 
+    if (data.birthdate) {
+      if (data.birthdate.includes("T")) {
+        data.birthdate = data.birthdate.split("T")[0];
+      }
+    }
+
     await profileModel.updateProfile(userId, role, data);
 
     res.json({ message: "Profile updated successfully" });
