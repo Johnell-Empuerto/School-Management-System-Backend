@@ -1,16 +1,18 @@
 const express = require("express");
 const router = express.Router();
 
+const checkAuth = require("../middleware/authMiddleware");
+
 const {
   getSubjects,
   createSubject,
   deleteSubject,
 } = require("../controllers/subjectController");
 
-router.get("/subjects", getSubjects);
+router.get("/subjects", checkAuth, getSubjects);
 
-router.post("/subjects", createSubject);
+router.post("/subjects", checkAuth, createSubject);
 
-router.delete("/subjects/:id", deleteSubject);
+router.delete("/subjects/:id", checkAuth, deleteSubject);
 
 module.exports = router;

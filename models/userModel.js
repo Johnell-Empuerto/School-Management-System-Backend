@@ -6,6 +6,12 @@ async function getUsers() {
   return rows;
 }
 
+// NEW - get user by ID
+async function getUserById(id) {
+  const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
+  return rows;
+}
+
 // existing
 async function getLogin(school_id) {
   const [rows] = await db.query(
@@ -15,6 +21,7 @@ async function getLogin(school_id) {
         u.school_id,
         u.password,
         u.role,
+        u.status,
 
         s.first_name AS student_first_name,
         s.last_name AS student_last_name,
@@ -85,6 +92,7 @@ async function checkSchoolIdExists(school_id) {
 
 module.exports = {
   getUsers,
+  getUserById,
   getLogin,
   createUser,
   updateUserStatus,

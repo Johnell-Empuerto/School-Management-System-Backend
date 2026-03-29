@@ -21,12 +21,47 @@ const getTeachers = async () => {
       t.highest_education,
       t.age,
       t.status,
-      t.profile_photo,   -- ADD THIS
+      t.profile_photo,
       u.school_id
     FROM teachers t
     LEFT JOIN users u
       ON t.user_id = u.id
   `);
+
+  return rows;
+};
+
+// NEW - get teacher by ID
+const getTeacherById = async (id) => {
+  const [rows] = await db.query(
+    `
+    SELECT 
+      t.id,
+      t.first_name,
+      t.middle_name,
+      t.last_name,
+      t.suffix_name,
+      t.gender,
+      t.birthdate,
+      t.contact_number,
+      t.email,
+      t.address,
+      t.department,
+      t.rank_level,
+      t.specialization,
+      t.hire_date,
+      t.employment_type,
+      t.highest_education,
+      t.age,
+      t.status,
+      t.profile_photo,
+      u.school_id
+    FROM teachers t
+    LEFT JOIN users u ON t.user_id = u.id
+    WHERE t.id = ?
+    `,
+    [id],
+  );
 
   return rows;
 };
@@ -66,25 +101,25 @@ const createTeacher = async (
   const [result] = await db.query(
     `
     INSERT INTO teachers (
-  user_id,
-  first_name,
-  middle_name,
-  last_name,
-  suffix_name,
-  gender,
-  birthdate,
-  contact_number,
-  email,
-  address,
-  department,
-  rank_level,
-  specialization,
-  hire_date,
-  employment_type,
-  highest_education,
-  age,
-  profile_photo
-)
+      user_id,
+      first_name,
+      middle_name,
+      last_name,
+      suffix_name,
+      gender,
+      birthdate,
+      contact_number,
+      email,
+      address,
+      department,
+      rank_level,
+      specialization,
+      hire_date,
+      employment_type,
+      highest_education,
+      age,
+      profile_photo
+    )
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
   `,
     [
@@ -188,6 +223,7 @@ const updateTeacher = async (
 
 module.exports = {
   getTeachers,
+  getTeacherById,
   createTeacher,
   deleteTeacher,
   updateTeacher,

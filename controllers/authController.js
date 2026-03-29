@@ -1,5 +1,6 @@
 const userModels = require("../models/userModel");
 const bcrypt = require("bcryptjs");
+const logAction = require("../utils/auditLogger");
 
 // EXISTING
 async function getUserControllers(req, res) {
@@ -51,6 +52,20 @@ async function getUserLoginControllers(req, res) {
         role: user.role,
       };
 
+      // LOG LOGIN ACTION
+      await logAction({
+        user_id: user.id,
+        action: "LOGIN",
+        table_name: "users",
+        record_id: user.id,
+        old_value: null,
+        new_value: JSON.stringify({
+          school_id: user.school_id,
+          role: user.role,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
       res.json({
         message: "Login success",
         user: {
@@ -85,7 +100,17 @@ async function createUserController(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await userModels.createUser(school_id, hashedPassword, role);
+    const result = await userModels.createUser(school_id, hashedPassword, role);
+
+    // LOG CREATE USER ACTION
+    await logAction({
+      user_id: req.session?.user?.id || null, // System action if no user session
+      action: "CREATE_USER",
+      table_name: "users",
+      record_id: result.insertId,
+      old_value: null,
+      new_value: JSON.stringify({ school_id, role }),
+    });
 
     res.json({
       message: "User created successfully",
@@ -101,7 +126,21 @@ async function updateUserStatusController(req, res) {
     const id = req.params.id;
     const { status } = req.body;
 
+    // Get old status before update
+    const [users] = await userModels.getUserById(id);
+    const oldStatus = users ? users.status : null;
+
     await userModels.updateUserStatus(id, status);
+
+    // LOG STATUS UPDATE
+    await logAction({
+      user_id: req.session.user.id,
+      action: "UPDATE_USER_STATUS",
+      table_name: "users",
+      record_id: id,
+      old_value: oldStatus,
+      new_value: status,
+    });
 
     res.json({
       message: "User status updated",
@@ -116,15 +155,31 @@ async function updateUserController(req, res) {
     const id = req.params.id;
     const { school_id, role } = req.body;
 
+    // Get old values before update
+    const [users] = await userModels.getUserById(id);
+    const oldValues = users
+      ? { school_id: users.school_id, role: users.role }
+      : null;
+
     const exists = await userModels.checkSchoolIdExists(school_id);
 
-    if (exists) {
+    if (exists && users?.school_id !== school_id) {
       return res.status(400).json({
         message: "School ID already exists",
       });
     }
 
     await userModels.updateUser(id, school_id, role);
+
+    // LOG USER UPDATE
+    await logAction({
+      user_id: req.session.user.id,
+      action: "UPDATE_USER",
+      table_name: "users",
+      record_id: id,
+      old_value: JSON.stringify(oldValues),
+      new_value: JSON.stringify({ school_id, role }),
+    });
 
     res.json({
       message: "User updated successfully",

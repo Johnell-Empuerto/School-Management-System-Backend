@@ -3,20 +3,47 @@ const db = require("../config/db");
 async function getAllClassSubjects() {
   const [rows] = await db.query(`
     SELECT 
-  cs.id,
-  cs.class_id,
-  cs.subject_id,
-  cs.teacher_id,
-  c.grade_level,
-  c.section,
-  s.subject_name,
-  CONCAT(t.first_name, ' ', t.last_name) AS teacher_name
-FROM class_subjects cs
-JOIN classes c ON cs.class_id = c.id
-JOIN subjects s ON cs.subject_id = s.id
-JOIN teachers t ON cs.teacher_id = t.id
-ORDER BY c.grade_level, c.section
+      cs.id,
+      cs.class_id,
+      cs.subject_id,
+      cs.teacher_id,
+      c.grade_level,
+      c.section,
+      s.subject_name,
+      CONCAT(t.first_name, ' ', t.last_name) AS teacher_name
+    FROM class_subjects cs
+    JOIN classes c ON cs.class_id = c.id
+    JOIN subjects s ON cs.subject_id = s.id
+    JOIN teachers t ON cs.teacher_id = t.id
+    ORDER BY c.grade_level, c.section
   `);
+
+  return rows;
+}
+
+// NEW - get class subject by ID
+async function getClassSubjectById(id) {
+  const [rows] = await db.query(
+    `
+    SELECT 
+      cs.id,
+      cs.class_id,
+      cs.subject_id,
+      cs.teacher_id,
+      c.grade_level,
+      c.section,
+      s.subject_name,
+      CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
+      t.first_name AS teacher_first_name,
+      t.last_name AS teacher_last_name
+    FROM class_subjects cs
+    JOIN classes c ON cs.class_id = c.id
+    JOIN subjects s ON cs.subject_id = s.id
+    JOIN teachers t ON cs.teacher_id = t.id
+    WHERE cs.id = ?
+    `,
+    [id],
+  );
 
   return rows;
 }
@@ -89,6 +116,7 @@ async function getTeacherClassSubjects(user_id) {
 
 module.exports = {
   getAllClassSubjects,
+  getClassSubjectById,
   createClassSubject,
   deleteClassSubject,
   updateClassSubject,

@@ -13,6 +13,7 @@ const getActivities = async (search, sort, limit, offset) => {
       a.activity_date,
       a.type,
       a.created_at,
+      a.created_by,
       u.school_id
     FROM activities a
     LEFT JOIN users u
@@ -23,6 +24,29 @@ const getActivities = async (search, sort, limit, offset) => {
     LIMIT ? OFFSET ?
     `,
     [`%${search}%`, `%${search}%`, limit, offset],
+  );
+
+  return rows;
+};
+
+// NEW - get activity by ID
+const getActivityById = async (id) => {
+  const [rows] = await db.query(
+    `
+    SELECT 
+      a.id,
+      a.title,
+      a.description,
+      a.activity_date,
+      a.type,
+      a.created_at,
+      a.created_by,
+      u.school_id
+    FROM activities a
+    LEFT JOIN users u ON a.created_by = u.id
+    WHERE a.id = ?
+    `,
+    [id],
   );
 
   return rows;
@@ -78,6 +102,7 @@ const deleteActivity = async (id) => {
 
 module.exports = {
   getActivities,
+  getActivityById,
   createActivity,
   deleteActivity,
   updateActivity,

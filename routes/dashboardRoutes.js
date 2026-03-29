@@ -1,17 +1,22 @@
 const express = require("express");
 const router = express.Router();
-
+const checkAuth = require("../middleware/authMiddleware");
 const dashboardController = require("../controllers/dashboardController");
 
 /* Dashboard Stats */
-router.get("/", dashboardController.getDashboard);
+router.get("/", checkAuth, dashboardController.getDashboard);
 
 /* Attendance Chart (Admin/Teacher) */
-router.get("/attendance-chart", dashboardController.getAttendanceChart);
+router.get(
+  "/attendance-chart",
+  checkAuth,
+  dashboardController.getAttendanceChart,
+);
 
 /* Student Attendance */
 router.get(
   "/student-attendance",
+  checkAuth,
   dashboardController.getStudentAttendanceChart,
 );
 

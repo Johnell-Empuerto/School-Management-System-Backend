@@ -25,6 +25,36 @@ async function getAllStudents() {
   return rows;
 }
 
+// NEW - get student by ID
+async function getStudentById(id) {
+  const [rows] = await db.query(
+    `
+    SELECT 
+        students.id,
+        users.school_id,
+        students.first_name,
+        students.middle_name,
+        students.last_name,
+        students.suffix_name,
+        students.age,
+        students.birthdate,
+        students.gender,
+        students.contact_number,
+        students.address,
+        students.guardian_name,
+        students.guardian_contact,
+        students.profile_photo,
+        students.status
+    FROM students
+    JOIN users ON students.user_id = users.id
+    WHERE students.id = ?
+    `,
+    [id],
+  );
+
+  return rows;
+}
+
 async function createStudent(data) {
   const {
     school_id,
@@ -138,6 +168,16 @@ async function updateStudent(id, data) {
   return result;
 }
 
+// NEW - update student status only
+async function updateStudentStatus(id, status) {
+  const [result] = await db.query(
+    `UPDATE students SET status = ? WHERE id = ?`,
+    [status, id],
+  );
+
+  return result;
+}
+
 async function deleteStudent(id) {
   const [result] = await db.query("DELETE FROM students WHERE id=?", [id]);
   return result;
@@ -164,8 +204,10 @@ async function getStudentsByClass(class_id) {
 
 module.exports = {
   getAllStudents,
+  getStudentById,
   createStudent,
   updateStudent,
+  updateStudentStatus,
   deleteStudent,
   getStudentsByClass,
 };

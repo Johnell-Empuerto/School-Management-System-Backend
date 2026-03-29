@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-
+const checkAuth = require("../middleware/authMiddleware");
 const calendarController = require("../controllers/calendarController");
 
-router.get("/", calendarController.getEvents);
-router.post("/", calendarController.createEvent);
-router.delete("/:id", calendarController.deleteEvent);
-router.put("/:id", calendarController.updateEvent);
+router.get("/", checkAuth, calendarController.getEvents);
+router.post("/", checkAuth, calendarController.createEvent);
+router.delete("/:id", checkAuth, calendarController.deleteEvent);
+router.put("/:id", checkAuth, calendarController.updateEvent);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const checkAuth = require("../middleware/authMiddleware");
 const {
   getClasses,
   createClass,
@@ -8,12 +8,12 @@ const {
   getClassesBySchoolYear,
 } = require("../controllers/classController");
 
-router.get("/classes", getClasses);
+router.get("/classes", checkAuth, getClasses);
 
-router.get("/classes-by-year", getClassesBySchoolYear);
+router.get("/classes-by-year", checkAuth, getClassesBySchoolYear);
 
-router.post("/classes", createClass);
+router.post("/classes", checkAuth, createClass);
 
-router.delete("/classes/:id", deleteClass);
+router.delete("/classes/:id", checkAuth, deleteClass);
 
 module.exports = router;

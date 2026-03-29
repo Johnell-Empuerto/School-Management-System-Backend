@@ -3,8 +3,14 @@ const router = express.Router();
 
 const gradesController = require("../controllers/gradesController");
 
-router.get("/:class_subject_id/:grading_period", gradesController.getGrades);
+const checkAuth = require("../middleware/authMiddleware");
 
-router.post("/", gradesController.saveGrade);
+router.get(
+  "/:class_subject_id/:grading_period/:school_year_id",
+  checkAuth,
+  gradesController.getGrades,
+);
+
+router.post("/", checkAuth, gradesController.saveGrade);
 
 module.exports = router;

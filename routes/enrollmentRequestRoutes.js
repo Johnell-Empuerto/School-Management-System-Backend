@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
-
+const checkAuth = require("../middleware/authMiddleware");
 const controller = require("../controllers/enrollmentRequestController");
 
-router.get("/", controller.getAllRequests);
+router.get("/", checkAuth, controller.getAllRequests);
 
-router.post("/", controller.createRequest);
+router.post("/", checkAuth, controller.createRequest);
 
-router.put("/approve/:id", controller.approveRequest);
+router.put("/approve/:id", checkAuth, controller.approveRequest);
 
-router.put("/reject/:id", controller.rejectRequest);
+router.put("/reject/:id", checkAuth, controller.rejectRequest);
 
 module.exports = router;

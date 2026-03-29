@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const checkAuth = require("../middleware/authMiddleware");
+
 const {
   getSchoolYears,
   getSchoolYearsFull,
@@ -11,17 +13,17 @@ const {
   getActiveYear,
 } = require("../controllers/schoolYearController");
 
-router.get("/school-years", getSchoolYears);
-router.get("/school-years-full", getSchoolYearsFull);
+router.get("/school-years", checkAuth, getSchoolYears);
+router.get("/school-years-full", checkAuth, getSchoolYearsFull);
 
-router.post("/school-years", createYear);
+router.post("/school-years", checkAuth, createYear);
 
-router.put("/school-years/:id", updateYear);
+router.put("/school-years/:id", checkAuth, updateYear);
 
-router.delete("/school-years/:id", deleteYear);
+router.delete("/school-years/:id", checkAuth, deleteYear);
 
-router.put("/school-years/:id/activate", activateYear);
+router.put("/school-years/:id/activate", checkAuth, activateYear);
 
-router.get("/school-years-active", getActiveYear);
+router.get("/school-years-active", checkAuth, getActiveYear);
 
 module.exports = router;

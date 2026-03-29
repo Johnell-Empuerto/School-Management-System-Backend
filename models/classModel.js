@@ -6,12 +6,33 @@ const getAllClasses = async () => {
       c.id,
       c.grade_level,
       c.section,
+      c.school_year_id,
       CONCAT(s.year_start,'-',s.year_end) AS school_year
     FROM classes c
     LEFT JOIN school_years s
     ON c.school_year_id = s.id
-    ORDER BY grade_level ASC, section ASC
+    ORDER BY s.year_start DESC, c.grade_level ASC, c.section ASC
   `);
+
+  return rows;
+};
+
+// NEW - get class by ID
+const getClassById = async (id) => {
+  const [rows] = await db.query(
+    `
+    SELECT 
+      c.id,
+      c.grade_level,
+      c.section,
+      c.school_year_id,
+      CONCAT(s.year_start,'-',s.year_end) AS school_year
+    FROM classes c
+    LEFT JOIN school_years s ON c.school_year_id = s.id
+    WHERE c.id = ?
+    `,
+    [id],
+  );
 
   return rows;
 };
@@ -27,6 +48,16 @@ const createClass = async (grade_level, section, school_year_id) => {
 
 const deleteClass = async (id) => {
   const [result] = await db.query("DELETE FROM classes WHERE id = ?", [id]);
+
+  return result;
+};
+
+// NEW - update class
+const updateClass = async (id, grade_level, section, school_year_id) => {
+  const [result] = await db.query(
+    "UPDATE classes SET grade_level = ?, section = ?, school_year_id = ? WHERE id = ?",
+    [grade_level, section, school_year_id, id],
+  );
 
   return result;
 };
@@ -53,7 +84,9 @@ const getClassesBySchoolYear = async (school_year_id) => {
 
 module.exports = {
   getAllClasses,
+  getClassById,
   createClass,
   deleteClass,
+  updateClass,
   getClassesBySchoolYear,
 };

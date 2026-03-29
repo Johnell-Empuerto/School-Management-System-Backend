@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const session = require("express-session");
+const xssSanitize = require("./middleware/xssSanitize");
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -11,6 +12,7 @@ const port = process.env.PORT || 3001;
 const allowedOrigins = [
   "http://localhost:5173",
   "https://school-management-system-tau-ebon.vercel.app",
+  // "https://a9e13d1cb4acfa.lhr.life",
 ];
 
 // middleware
@@ -22,9 +24,10 @@ app.use(
 );
 
 app.use(helmet());
+app.use(xssSanitize);
 app.use(express.json());
 
-// SESSION MIDDLEWARE
+// SESSION MIDDLEWARE Local development
 // app.use(
 //   session({
 //     name: "sms-session",
@@ -39,6 +42,8 @@ app.use(express.json());
 //     },
 //   }),
 // );
+
+//for live
 
 app.set("trust proxy", 1);
 
@@ -74,6 +79,7 @@ const activityRoutes = require("./routes/activityRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const calendarRoutes = require("./routes/calendarRoutes");
 const profileRoutes = require("./routes/profileRoutes");
+const promotionRoutes = require("./routes/promotionRoutes");
 
 //link routes
 app.use("/api", authRoutes);
@@ -92,6 +98,7 @@ app.use("/api/activities", activityRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api", promotionRoutes);
 
 // test route
 app.get("/", (req, res) => {
