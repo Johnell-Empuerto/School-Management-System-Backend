@@ -23,7 +23,11 @@ app.use(
   }),
 );
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+);
 app.use(xssSanitize);
 app.use(express.json());
 
